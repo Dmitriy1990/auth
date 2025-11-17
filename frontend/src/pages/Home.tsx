@@ -1,21 +1,17 @@
-import type { FC } from 'react';
-import type { User } from '../types';
+import { observer } from 'mobx-react-lite';
+import store from '../store';
 
-type Props = {
-  user: User | null;
-};
-
-export const Home: FC<Props> = ({ user }) => {
+export const Home = observer(() => {
   return (
     <div className="p-6 backdrop-blur-2xl rounded-2xl">
       <h1>Hello</h1>
-      {user && (
+      {store.user && (
         <>
-          <p>id: {user.id}</p>
-          <p>name: {user.name}</p>
-          <p>email: {user.email}</p>
+          <p>id: {store.user.id}</p>
+          <p>name: {store.user.name}</p>
+          <p>email: {store.user.email}</p>
         </>
       )}
     </div>
   );
-};
+});

@@ -1,39 +1,26 @@
-import axios, { AxiosError } from 'axios';
 import { useState } from 'react';
-import type { FC } from 'react';
-import type { User } from '../types';
 import { useNavigate } from 'react-router-dom';
+import store from '../store';
+import { observer } from 'mobx-react-lite';
 
-type Props = {
-  setUser: (_: User | null) => void;
-};
-
-export const Register: FC<Props> = ({ setUser }) => {
+export const Register = observer(() => {
   const [form, setForm] = useState({
     name: '',
     email: '',
     password: '',
   });
-  const [error, setError] = useState('');
 
   const navigate = useNavigate();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
-    try {
-      const res = await axios.post<User>('http://localhost:3001/api/auth/register', form);
-      setUser(res.data);
-      navigate('/');
-    } catch (e: any) {
-      console.error(e?.message as AxiosError);
-      setError(e?.message as string);
-    }
+    const success = await store.register(form);
+    if (success) navigate('/');
   };
 
   return (
     <div>
-      <p className="text-red-600">{error}</p>
+      <p className="text-red-600">{store.error}</p>
       <form onSubmit={onSubmit}>
         <h2>Login</h2>
         <input
@@ -61,4 +48,4 @@ export const Register: FC<Props> = ({ setUser }) => {
       </form>
     </div>
   );
-};
+});

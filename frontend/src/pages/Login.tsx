@@ -1,38 +1,28 @@
-import axios, { AxiosError } from 'axios';
 import { useState } from 'react';
-import type { FC } from 'react';
-import type { User } from '../types';
 import { useNavigate } from 'react-router-dom';
+import { observer } from 'mobx-react-lite';
+import store from '../store';
 
-type Props = {
-  setUser: (_: User | null) => void;
-};
-
-export const Login: FC<Props> = ({ setUser }) => {
+export const Login = observer(() => {
   const [form, setForm] = useState({
     email: '',
     password: '',
   });
-  const [error, setError] = useState('');
 
   const navigate = useNavigate();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
-    try {
-      const res = await axios.post<{ user: User }>('http://localhost:3001/api/auth/login', form);
-      setUser(res.data.user);
+
+    const result = await store.login(form);
+    if (result) {
       navigate('/');
-    } catch (e: any) {
-      console.error(e?.message as AxiosError);
-      setError(e?.message as string);
     }
   };
 
   return (
     <div>
-      <p className="text-red-600">{error}</p>
+      <p className="text-red-600">{store.error}</p>
       <form onSubmit={onSubmit}>
         <h2>Login</h2>
         <input
@@ -53,4 +43,4 @@ export const Login: FC<Props> = ({ setUser }) => {
       </form>
     </div>
   );
-};
+});

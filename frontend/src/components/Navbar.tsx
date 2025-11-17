@@ -1,24 +1,13 @@
-import type { FC } from 'react';
-import type { User } from '../types';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import store from '../store';
+import { observer } from 'mobx-react-lite';
 
-type Props = {
-  user: User | null;
-  setUser: (_: User | null) => void;
-};
-
-export const Navbar: FC<Props> = ({ user, setUser }) => {
+export const Navbar = observer(() => {
   const navigate = useNavigate();
 
   const logOut = async () => {
-    try {
-      await axios.post('http://localhost:3001/api/auth/logout');
-      navigate('/');
-      setUser(null);
-    } catch (e) {
-      console.error(e);
-    }
+    const success = await store.logOut();
+    if (success) navigate('/');
   };
 
   return (
@@ -26,7 +15,7 @@ export const Navbar: FC<Props> = ({ user, setUser }) => {
       <Link to={'/'} className="font-bold text-white text-2xl">
         Logo
       </Link>
-      {user ? (
+      {store.user ? (
         <button
           onClick={logOut}
           className="p-2 border-0 rounded-[5px] bg-red-700 inline-block font-medium text-white">
@@ -48,4 +37,4 @@ export const Navbar: FC<Props> = ({ user, setUser }) => {
       )}
     </header>
   );
-};
+});
