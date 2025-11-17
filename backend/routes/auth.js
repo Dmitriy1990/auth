@@ -75,7 +75,7 @@ router.post('/login', async (req, res) => {
 });
 
 router.get('/me', protect, async (req, res) => {
-  res.json(res.user);
+  res.json(req.user);
 });
 
 router.post('/logout', async (req, res) => {
